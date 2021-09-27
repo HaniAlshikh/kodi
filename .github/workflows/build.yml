@@ -18,19 +18,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        submodules: true
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
 
-    - name: build
-      run: python3 _repo_generator.py
+      - name: build
+        run: python3 _repo_generator.py
 
-    - name: Commit build files
-      if: !(startsWith(github.ref, 'refs/tags/'))
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: ${{ format('[Automated build] {0}', github.event.head_commit.message) }}
+      - name: Commit build files
+        if: !(startsWith(github.ref, 'refs/tags/'))
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: ${{ format('[Automated build] {0}', github.event.head_commit.message) }}
 
   draft-release:
     needs: build
