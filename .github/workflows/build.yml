@@ -68,7 +68,7 @@ jobs:
 
       - name: Check version match
         run:
-          sudo apt install xmlstarlet
+          sudo apt-get install xmlstarlet
           current=$(xml sel -t -v '/addon/@version' repo/repository.hs/addon.xml)
           expected=$(cat release-version.txt)
           [ $current != $expected ] && exit 1
