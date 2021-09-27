@@ -1,0 +1,63 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: build
+      run: python3 _repo_generator.py
+
+    - name: Commit build files
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: format('[Automated build] {0}', ${{ github.event.head_commit.message }})
+
+  tag-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+#      - name: Checkout
+#      - uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 2
+#
+#      - name: Detect and tag new version
+#        uses: salsify/action-detect-and-tag-new-version@v2
+#        id: version-detector
+#        with:
+#          version-command: |
+#            awk '/name="H-S Repo" version/ {print $6}' FS='"' repo/repository.hs/addon.xml)
+#          create-tag: true
+#          tag-template: v{VERSION}
+
+      - uses: release-drafter/release-drafter@v5
+        id: release-draft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: echo "TAG=$(echo ${GITHUB_REF##*/})" > $GITHUB_ENV
+      - name: Upload Release Asset
+        if: startsWith(github.ref, 'refs/tags/')
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release-draft.outputs.upload_url }}
+          asset_path: repo/zips/repository.hs/repository.hs-${{ env.TAG }}.zip
+          asset_name: repository.hs-${{ env.TAG }}.zip
+          asset_content_type: application/zip
+
