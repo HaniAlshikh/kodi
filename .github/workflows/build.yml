@@ -25,7 +25,7 @@ jobs:
     - name: Commit build files
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: '[Automated build]' ${{ github.event.head_commit.message }}
+        commit_message: ${{ format('[Automated build] {0}', github.event.head_commit.message }}
 
   tag-and-release:
     needs: build
