@@ -11,7 +11,7 @@ import hashlib
 import zipfile
 from xml.etree import ElementTree
 
-KODI_VERSIONS = ["repo"]
+KODI_VERSIONS = [os.getenv('RELEASE') or "repo"]
 IGNORE = [
     ".git",
     ".github",

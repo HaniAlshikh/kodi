@@ -9,6 +9,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
+env:
+  RELEASE: repo
+  REPO_FOLDER: repository.hs
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,45 +27,81 @@ jobs:
       run: python3 _repo_generator.py
 
     - name: Commit build files
+      if: !startsWith(github.ref, 'refs/tags/')
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: ${{ format('[Automated build] {0}', github.event.head_commit.message) }}
 
-  tag-and-release:
+  draft-release:
     needs: build
 
     runs-on: ubuntu-latest
 
     steps:
-#      - name: Checkout
-#      - uses: actions/checkout@v2
-#        with:
-#          fetch-depth: 2
-#
-#      - name: Detect and tag new version
-#        uses: salsify/action-detect-and-tag-new-version@v2
-#        id: version-detector
-#        with:
-#          version-command: |
-#            awk '/name="H-S Repo" version/ {print $6}' FS='"' repo/repository.hs/addon.xml)
-#          create-tag: true
-#          tag-template: v{VERSION}
-
-      - uses: release-drafter/release-drafter@v5
-        id: release-draft
+      - name: Update draft
+        id: release-drafter
+        uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: echo "TAG=$(echo ${${GITHUB_REF##*/}:1})" > $GITHUB_ENV
-      - name: Upload Release Asset
-        if: startsWith(github.ref, 'refs/tags/')
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release version
+        run: echo ${{ steps.release-drafter.tag_name }} > release-version.txt
+
+      - name: Upload release version
+        uses: actions/upload-artifact@v2
         with:
-          upload_url: ${{ steps.release-draft.outputs.upload_url }}
-          asset_path: repo/zips/repository.hs/repository.hs-${{ env.TAG }}.zip
-          asset_name: repository.hs-${{ env.TAG }}.zip
-          asset_content_type: application/zip
+          name: release-version
+          path: release-version.txt
 
+  version-check:
+    needs: draft-release
+    if: github.ref == 'refs/heads/development'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download draft release version
+        uses: actions/download-artifact@v2
+        with:
+          name: release-version
+
+      - name: Check version match
+        run:
+          current=$(xml sel -t -v '/addon/@version' repo/repository.hs/addon.xml)
+          expected=$(cat release-version.txt)
+          [[ $current != $expected ]] && exit 1
+
+  tag-and-release:
+    needs: version-check
+    if: github.ref == 'refs/heads/development'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Publish draft
+        id: releaser
+        uses: release-drafter/release-drafter@v5
+        with:
+          publish: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove v from tag
+        env:
+          V_TAG: ${{ steps.releaser.outputs.upload_url }}
+        run: echo "TAG=$(echo ${V_TAG:1})" > $GITHUB_ENV
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.releaser.outputs.upload_url }}
+          asset_path: ${{ env.RELEASE/zips/env.REPO_FOLDER/env.REPO_FOLDER-env.TAG.zip }}
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
