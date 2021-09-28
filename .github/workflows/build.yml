@@ -43,7 +43,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get release version
-        run: echo ${{ steps.release-drafter.tag_name }} > release-version.txt
+        run: |
+          echo ${{ steps.release-drafter.id }}
+          echo ${{ steps.release-drafter.name }}
+          echo ${{ steps.release-drafter.tag_name }}
+          echo ${{ steps.release-drafter.body }}
+          echo ${{ steps.release-drafter.tag_name }} > release-version.txt
 
       - name: Upload release version
         uses: actions/upload-artifact@v2
