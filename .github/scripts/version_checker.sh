@@ -2,5 +2,7 @@
 
 current=$(awk '/name="H-S Repo" version/ {print $6}' FS='"' $RELEASE/$REPO_FOLDER/addon.xml)
 expected=$(cat release-version.txt)
-echo "repo version: $current" && echo "draft version: $expected"
-[ "${current:1}" != "$expected" ] && exit 1
+echo "repo version: $current" && echo "draft version: ${expected:1}"
+if [ "$current" != "${expected:1}" ]; then
+  exit 1
+fi
