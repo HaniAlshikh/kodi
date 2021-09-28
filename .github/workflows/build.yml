@@ -68,7 +68,7 @@ jobs:
 
       - name: Check version match
         run:
-          current=$(awk '/name="H-S Repo" version/ {print $6}' FS='"' $RELEASE/$REPO_FOLDER/addon.xml))
+          current=$(awk '/name="H-S Repo" version/ {print $6}' FS='"' $RELEASE/$REPO_FOLDER/addon.xml)
           expected=$(cat release-version.txt)
           [ $current != $expected ] && exit 1
 
