@@ -100,7 +100,9 @@ jobs:
         run: |
           mkdir -p packages
           cp ${{ env.RELEASE }}/zips/${{ env.REPO_FOLDER }}/${{ env.REPO_FOLDER }}-${{ env.TAG }}.zip \
-          packages/${{ env.REPO_FOLDER }}.zip
+                    packages/${{ env.REPO_FOLDER }}-latest.zip
+          cp ${{ env.RELEASE }}/zips/${{ env.REPO_FOLDER }}/${{ env.REPO_FOLDER }}-${{ env.TAG }}.zip \
+                    packages/${{ env.REPO_FOLDER }}.zip
 
       - name: Deploy release
         uses: peaceiris/actions-gh-pages@v3
