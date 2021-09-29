@@ -95,3 +95,19 @@ jobs:
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prep to deploy
+        run: |
+          mkdir -p packages
+          cp ${{ env.RELEASE }}/zips/${{ env.REPO_FOLDER }}/${{ env.REPO_FOLDER}}-${{ env.TAG }}.zip \
+          packages/${{ env.REPO_FOLDER}}.zip
+
+      - name: Deploy release
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: repo
+          publish_dir: ./packages
+          destination_dir: packages
+          enable_jekyll: false
+          keep_files: true
