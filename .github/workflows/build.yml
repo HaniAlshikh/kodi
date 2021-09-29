@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - development
-  pull_request:
-    types: [opened, reopened, synchronize]
 
 env:
   RELEASE: repo
@@ -25,14 +23,12 @@ jobs:
         run: python3 _repo_generator.py
 
       - name: Commit build files
-        if: github.ref == 'refs/heads/development' && startsWith(github.ref, 'refs/tags/') == false
+        if: startsWith(github.ref, 'refs/tags/') == false
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{ format('[Automated build] {0}', github.event.head_commit.message) }}
 
   draft-release:
-    needs: build
-
     runs-on: ubuntu-latest
 
     steps:
@@ -42,19 +38,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get release version
-        run: echo ${{ steps.release-drafter.outputs.tag_name }} > release-version.txt
+      - name: Get draft version
+        run: echo ${{ steps.release-drafter.outputs.tag_name }} > draft-version.txt
 
-      - name: Upload release version
+      - name: Upload draft version
         uses: actions/upload-artifact@v2
         with:
-          name: release-version
-          path: release-version.txt
+          name: draft-version
+          path: draft-version.txt
 
   version-check:
     needs: draft-release
-    if: github.ref == 'refs/heads/development'
-
     runs-on: ubuntu-latest
 
     steps:
@@ -64,20 +58,20 @@ jobs:
       - name: Download draft release version
         uses: actions/download-artifact@v2
         with:
-          name: release-version
+          name: draft-version
 
       - name: Check version match
         run: ./.github/scripts/version_checker.sh
 
   tag-and-release:
-    needs: version-check
-    if: github.ref == 'refs/heads/development'
-
+    needs: [build, version-check]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: 'development'
 
       - name: Publish draft
         id: releaser
