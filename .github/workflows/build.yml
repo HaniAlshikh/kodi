@@ -57,8 +57,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: test
-        run: echo ${{ needs.draft-release }}
+      - name: Dump Needs context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(needs) }}
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Checkout
         uses: actions/checkout@v2
