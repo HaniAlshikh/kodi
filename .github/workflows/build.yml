@@ -58,7 +58,7 @@ jobs:
 
     steps:
       - name: test
-        run: echo ${{ needs.draft-release.outputs.draft-version }}
+        run: echo ${{ needs.draft-release }}
 
       - name: Checkout
         uses: actions/checkout@v2
