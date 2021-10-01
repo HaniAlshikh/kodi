@@ -57,7 +57,7 @@ jobs:
       - name: Check version match
         id: version-check
         env:
-          EXCPECTED: ${{ jobs.draft-release.outputs.draft-version }}
+          EXCPECTED: ${{ needs.draft-release.outputs.draft-version }}
         run: echo ::set-output name=version_check::$(./.github/scripts/version_checker.sh)
 
   tag-and-release:
