@@ -45,12 +45,10 @@ jobs:
     needs: draft-release
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Dump Needs context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(needs) }}
-        run: echo "$GITHUB_CONTEXT"
+    outputs:
+      version_check: ${{ steps.version-check.outputs.version_check }}
 
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
