@@ -39,7 +39,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get draft version
-        run: echo ${{ steps.release-drafter.outputs.tag_name }} > draft-version.txt
+        id: draft-version
+        run: |
+          echo ${{ steps.release-drafter.outputs.tag_name }} > draft-version.txt
+          echo ::set-output name=draft-version::${{ steps.release-drafter.outputs.tag_name }}
+
+      - run: echo ${{ steps.draft-version.outputs.draft-version }}
 
       - name: Upload draft version
         uses: actions/upload-artifact@v2
@@ -52,6 +57,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: test
+        run: echo ${{ needs.draft-release.outputs.draft-version }}
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -70,9 +78,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: test
-        run: echo ${{ needs.version-check.outputs.version_check }}
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
