@@ -65,7 +65,7 @@ jobs:
 
   tag-and-release:
     needs: [build, version-check]
-    if: steps.vars.outputs.version_check
+    if: ${{ steps.vars.outputs.version_check }}
     runs-on: ubuntu-latest
 
     steps:
