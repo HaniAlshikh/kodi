@@ -4,6 +4,4 @@ current=$(awk '/name="H-S Repo" version/ {print $6}' FS='"' $RELEASE/$REPO_FOLDE
 echo "repo version: $current" && echo "draft version: ${EXCPECTED:1}"
 if [ "$current" != "${EXCPECTED:1}" ]; then
   echo true
-else
-  echo false
 fi
