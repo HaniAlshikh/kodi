@@ -61,11 +61,12 @@ jobs:
           name: draft-version
 
       - name: Check version match
-        run: echo "version_check=$(./.github/scripts/version_checker.sh)" > $GITHUB_ENV
+        id: version-check
+        run: echo ::set-output name=version_check::$(./.github/scripts/version_checker.sh)
 
   tag-and-release:
     needs: [build, version-check]
-    if: env.version_check
+    if: needs.version-check.outputs.version_check
     runs-on: ubuntu-latest
 
     steps:
