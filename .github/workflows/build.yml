@@ -31,26 +31,15 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
 
+    outputs:
+      draft-version: ${{ steps.release-drafter.outputs.tag_name }}
+
     steps:
       - name: Update draft
         id: release-drafter
         uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get draft version
-        id: draft-version
-        run: |
-          echo ${{ steps.release-drafter.outputs.tag_name }} > draft-version.txt
-          echo ::set-output name=draft-version::${{ steps.release-drafter.outputs.tag_name }}
-
-      - run: echo ${{ steps.draft-version.outputs.draft-version }}
-
-      - name: Upload draft version
-        uses: actions/upload-artifact@v2
-        with:
-          name: draft-version
-          path: draft-version.txt
 
   version-check:
     needs: draft-release
@@ -65,13 +54,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download draft release version
-        uses: actions/download-artifact@v2
-        with:
-          name: draft-version
-
       - name: Check version match
         id: version-check
+        env:
+          EXCPECTED: ${{ jobs.draft-release.outputs.draft-version }}
         run: echo ::set-output name=version_check::$(./.github/scripts/version_checker.sh)
 
   tag-and-release:
