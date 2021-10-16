@@ -58,11 +58,12 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.hs" name="H-S Videos" version="0.1.1" provider-name="Hani Alshikh">
+<addon id="plugin.video.hs" name="H-S Videos" version="0.1.2" provider-name="Hani Alshikh">
 	<requires>
 		<import addon="xbmc.python" version="3.0.0" optional="false"/>
 		<import addon="script.module.requests" version="2.22.0" optional="false"/>
 		<import addon="script.module.beautifulsoup4" version="4.9.3" optional="false"/>
+		<import addon="script.module.pil" version="5.1.0" optional="true"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="hs.py">
 		<provides>video</provides>
