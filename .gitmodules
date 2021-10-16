@@ -1,3 +1,6 @@
 [submodule "repo/plugin.video.hs"]
 	path = repo/plugin.video.hs
 	url = git@github.com:HaniAlshikh/plugin.video.hs.git
+[submodule "repo/context.hs"]
+	path = repo/context.hs
+	url = git@github.com:HaniAlshikh/context.hs.git
