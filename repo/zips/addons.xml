@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="repository.hs" name="H-S Repo" version="0.0.9" provider-name="Hani Alshikh">
-    <extension point="xbmc.addon.repository" name="H-S Repo">
-        <dir>
-            <info compressed="false">https://raw.githubusercontent.com/HaniAlshikh/kodi/development/repo/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/HaniAlshikh/kodi/development/repo/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/HaniAlshikh/kodi/development/repo/zips/</datadir>
-        </dir>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>H-S</summary>
-        <description>H-S Repository</description>
-        <disclaimer></disclaimer>
-        <platform>all</platform>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.jpg</fanart>
-        </assets>
-    </extension>
-</addon>
-
 <addon id="context.hs" version="0.1.0" name="H-S Videos - Global Context Menu Items" provider-name="Hani Alshikh">
 	<requires>
 		<import addon="xbmc.addon" version="17.9.910" />
@@ -58,7 +38,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.hs" name="H-S Videos" version="0.1.3" provider-name="Hani Alshikh">
+<addon id="plugin.video.hs" name="H-S Videos" version="0.1.4" provider-name="Hani Alshikh">
 	<requires>
 		<import addon="xbmc.python" version="3.0.0" optional="false"/>
 		<import addon="script.module.requests" version="2.22.0" optional="false"/>
@@ -113,5 +93,25 @@
             <fanart>fanart-hs.jpg</fanart>
         </assets>
 	</extension>
+</addon>
+
+<addon id="repository.hs" name="H-S Repo" version="0.0.9" provider-name="Hani Alshikh">
+    <extension point="xbmc.addon.repository" name="H-S Repo">
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/HaniAlshikh/kodi/development/repo/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/HaniAlshikh/kodi/development/repo/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/HaniAlshikh/kodi/development/repo/zips/</datadir>
+        </dir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>H-S</summary>
+        <description>H-S Repository</description>
+        <disclaimer></disclaimer>
+        <platform>all</platform>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+        </assets>
+    </extension>
 </addon>
 </addons>
